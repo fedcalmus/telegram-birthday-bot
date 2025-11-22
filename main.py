@@ -1,13 +1,13 @@
 import datetime
 import json
 from apscheduler.schedulers.background import BackgroundScheduler
-from telegram import Bot, Update, ChatMemberUpdated
+from telegram import Bot, Update
 from telegram.ext import (
     ApplicationBuilder, ContextTypes, ChatMemberHandler
 )
 import pytz
 
-TOKEN = "8238756652:AAERvMbBXCOnc6Oqu8J3Xy-81bSO4hiekDs"
+TOKEN = "YOUR_NEW_SECURE_TOKEN"  # IMPORTANT: replace with regenerated token
 
 # Armenia timezone
 ARMENIA_TZ = pytz.timezone("Asia/Yerevan")
@@ -78,21 +78,8 @@ def check_birthdays():
                 bot.send_sticker(group_id, data["sticker"])
 
 
-# ------------------ MAIN ---------------------------
-async def main():
-    app = ApplicationBuilder().token(TOKEN).build()
-
-    # Detect when bot is added / removed
-    app.add_handler(ChatMemberHandler(bot_added, ChatMemberHandler.MY_CHAT_MEMBER))
-
-    # Scheduler
-    scheduler = BackgroundScheduler(timezone=ARMENIA_TZ)
-    scheduler.add_job(check_birthdays, "cron", hour=8, minute=0)
-    scheduler.start()
-
-    await app.run_polling()
-
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+# ------------------ 5-MINUTE REMINDER ---------------
+def send_reminder():
+    groups = load_groups()
+    for group_id in groups:
+        bot.send_message(group_id, "⏳ Bot is running
